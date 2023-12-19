@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'products/create'
   # Receipts and Addresses routes
   resources :receipts, only: [:create]
   resources :addresses, except: [:edit]
