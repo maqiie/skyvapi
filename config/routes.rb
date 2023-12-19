@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   get 'products/create'
+  post '/create_product', to: 'products#create', as: 'create_product'
+
   # Receipts and Addresses routes
   resources :receipts, only: [:create]
   resources :addresses, except: [:edit]

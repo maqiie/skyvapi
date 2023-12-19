@@ -1,7 +1,18 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
-#   Character.create(name: "Luke", movie: movies.first)
+# db/seeds.rb
+require 'faker'
+
+# Create random categories
+
+# Create specific categories
+Category.create(name: 'Clothes', description: 'Clothing category')
+Category.create(name: 'Shoes', description: 'Footwear category')
+Category.create(name: 'Jewelry', description: 'Jewelry category')
+Category.create(name: 'Men', description: 'Men\'s clothing')
+Category.create(name: 'Women', description: 'Women\'s clothing')
+
+# Create random brands
+5.times do
+  Brand.create(name: Faker::Company.name, description: Faker::Lorem.sentence)
+end
+
+puts 'Seed data has been created.'
