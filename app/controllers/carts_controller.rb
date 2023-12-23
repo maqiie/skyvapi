@@ -63,6 +63,8 @@ class CartsController < ApplicationController
   
 
   def add_quantity
+    Rails.logger.debug("Entered add_quantity action")
+
     cart = current_user.cart
     order_item_id = params[:product_id] # Change the parameter name
     
@@ -90,9 +92,72 @@ class CartsController < ApplicationController
       # Update the order item's quantity
       order_item.update(quantity: updated_quantity)
     end
+    
   
+    Rails.logger.debug("Before updating quantity: #{order_item.quantity}")
+    Rails.logger.debug("Updated quantity: #{updated_quantity}")
+  
+    if updated_quantity < 0
+      Rails.logger.debug("Deleting order_item...")
+      order_item.destroy
+    else
+      # Update the order item's quantity
+      Rails.logger.debug("Updating order_item...")
+      order_item.update(quantity: updated_quantity)
+    end
+  
+    Rails.logger.debug("Exiting add_quantity action")
     render json: { message: 'Quantity updated successfully' }, status: :ok
+
   end
+#   def add_quantity
+#     Rails.logger.debug("Entered add_quantity action")
+  
+#     cart = current_user.cart
+#     product_id = params[:product_id]
+  
+#     if cart.nil?
+#       render json: { errors: 'User does not have a cart' }, status: :not_found
+#       return
+#     end
+  
+#     order_item = cart.order_items.find_by(product_id: product_id)
+  
+#     if order_item.nil?
+#       render json: { errors: 'Order item not found in the cart' }, status: :not_found
+#       return
+#     end
+  
+#     new_quantity = params[:quantity].to_i
+#     updated_quantity = order_item.quantity + new_quantity
+  
+#     Rails.logger.debug("Before updating quantity: #{order_item.quantity}")
+#     Rails.logger.debug("New quantity: #{new_quantity}")
+#     Rails.logger.debug("Updated quantity: #{updated_quantity}")
+  
+#     # ...
+
+# if updated_quantity <= 0
+#   Rails.logger.debug("Deleting order_item...")
+#   order_item.destroy
+# else
+#   Rails.logger.debug("Updating order_item...")
+
+#   order_item.update(quantity: updated_quantity)
+
+#   if order_item.errors.any?
+#     Rails.logger.error("Error updating order_item: #{order_item.errors.full_messages.join(', ')}")
+#     render json: { errors: order_item.errors.full_messages, order_item: order_item.errors }, status: :unprocessable_entity
+#     return
+#   end
+# end
+
+# # ...
+
+  
+#     Rails.logger.debug("Exiting add_quantity action")
+#     render json: { message: 'Quantity updated successfully' }, status: :ok
+#   end
   
   
   
