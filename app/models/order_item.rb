@@ -1,7 +1,7 @@
 class OrderItem < ApplicationRecord
   belongs_to :order
   belongs_to :product
-  belongs_to :cart
+  validates :cart, presence: true
+  belongs_to :cart, optional: true
 
-  
 end

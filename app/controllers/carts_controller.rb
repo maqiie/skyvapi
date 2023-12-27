@@ -1,21 +1,82 @@
 # app/controllers/carts_controller.rb
 class CartsController < ApplicationController
+
+  
   def add_to_cart
     product = Product.find(params[:product_id])
     quantity = params[:quantity].to_i
-
+  
     user = current_user
     cart = user.cart || user.create_cart
     order = cart.orders.find_or_create_by(status: 'open')
     order_item = order.order_items.build(product: product, quantity: quantity)
-
-    if order_item.save
-      render json: { message: 'Product added to cart successfully' }
-    else
-      render json: { error: 'Failed to add product to cart', details: order_item.errors.full_messages }, status: :unprocessable_entity
+    order_item.cart = cart  # Set the cart association for the order_item
+  
+    ActiveRecord::Base.transaction do
+      if order_item.save
+        render json: { message: 'Product added to cart successfully' }
+      else
+        render json: { error: 'Failed to add product to cart', details: order_item.errors.full_messages }, status: :unprocessable_entity
+      end
     end
   end
-  before_action :authenticate_user! # Ensure the user is authenticated
+  
+#   def add_to_cart
+#     product = Product.find(params[:product_id])
+#     quantity = params[:quantity].to_i
+  
+#     user = current_user
+#     cart = user.cart || user.create_cart
+#     order = cart.orders.find_or_create_by(status: 'open')
+  
+#     # Debugging statements
+#     puts "User ID: #{user.id}"
+#     puts "Cart ID before transaction: #{cart.id}"
+#     puts "Order ID before transaction: #{order.id}"
+  
+#     ActiveRecord::Base.transaction do
+#       # Ensure the Order is associated with the Cart
+#       order.update(cart: cart) unless order.cart
+  
+#       order_item = order.order_items.build(product: product, quantity: quantity)
+  
+#       if order_item.save
+#         render json: { message: 'Product added to cart successfully' }
+#       else
+#         render json: { error: 'Failed to add product to cart', details: order_item.errors.full_messages }, status: :unprocessable_entity
+#       end
+#     end
+  
+#     # Debugging statements after the transaction
+#     puts "Cart ID after transaction: #{cart.id}"
+#     puts "Order ID after transaction: #{order.id}"
+#   end
+
+#   private
+
+# def add_to_cart_params
+#   params.require(:order_item).permit(:product_id, :quantity)
+# end
+
+  
+  # def add_to_cart
+  #   product = Product.find(params[:product_id])
+  #   quantity = params[:quantity].to_i
+  
+  #   user = current_user
+  #   cart = user.cart || user.create_cart
+  #   order = cart.orders.find_or_create_by(status: 'open')
+  
+  #   # Make sure the association with OrderItem is correctly set up in your Order model
+  #   order_item = order.order_items.build(product: product, quantity: quantity)
+  
+  #   if order_item.save
+  #     render json: { message: 'Product added to cart successfully' }
+  #   else
+  #     render json: { error: 'Failed to add product to cart', details: order_item.errors.full_messages }, status: :unprocessable_entity
+  #   end
+  # end
+  
   
   ActiveRecord::Base.transaction do
   def create

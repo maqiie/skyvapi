@@ -6,7 +6,8 @@ class Product < ApplicationRecord
     belongs_to :category
     attribute :category_id, :integer
 
-  
+    has_many :order_items
+
     validates :name, presence: true
     validates :description, presence: true
     validates :price, presence: true
